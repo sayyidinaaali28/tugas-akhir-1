@@ -9,7 +9,7 @@ Dashboard ini dibuat menggunakan Streamlit dan menampilkan hasil analisis data p
 3. Jalankan dashboard:
 
 ## 📊 Dataset
-- `main_data.csv`: Dataset utama yang digunakan dalam dashboard.
+- `merged_data.csv`: Dataset utama yang digunakan dalam dashboard.
 
 ## 🔗 Deployment
 Dashboard telah dideploy di Streamlit Cloud.  
