@@ -13,7 +13,7 @@ Dashboard ini dibuat menggunakan Streamlit dan menampilkan hasil analisis data p
 
 ## 🔗 Deployment
 Dashboard telah dideploy di Streamlit Cloud.  
-[Klik di sini untuk melihat dashboard](https://tugas-akhir-1-kjq87sxqhflniwsneyymda.streamlit.app/)
+[Klik di sini untuk melihat dashboard](https://sayyidinaaali-dashboard.streamlit.app/)
 
 
 ##  Instalasi
