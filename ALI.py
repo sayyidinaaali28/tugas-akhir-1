@@ -1,7 +1,8 @@
 import streamlit as st
-import plotly.express as px
 import pandas as pd
 import requests
+import matplotlib.pyplot as plt
+import seaborn as sns
 from io import BytesIO
 
 # Fungsi untuk mengunduh dan membaca data dari Google Drive (dengan caching)
@@ -37,61 +38,39 @@ if df is not None:
     )
     df = df[(df['order_purchase_timestamp'] >= pd.Timestamp(start_date)) & (df['order_purchase_timestamp'] <= pd.Timestamp(end_date))]
     
-    # Terjemahkan kategori produk jika ada
-    kategori_terjemahan = {
-        "utilidades_domesticas": "Peralatan Rumah Tangga",
-        "perfumaria": "Parfum",
-        "automotivo": "Otomotif",
-        "pet_shop": "Toko Hewan Peliharaan",
-        "papelaria": "Alat Tulis",
-        "moveis_decoracao": "Dekorasi Rumah",
-        "moveis_escritorio": "Furniture Kantor",
-        "ferramentas_jardim": "Peralatan Taman",
-        "informatica_acessorios": "Aksesori Komputer",
-        "cama_mesa_banho": "Peralatan Tidur & Mandi",
-        "brinquedos": "Mainan",
-        "construcao_ferramentas": "Alat Konstruksi",
-        "telefonia": "Telepon & Aksesori",
-        "beleza_saude": "Kecantikan & Kesehatan",
-        "eletronicos": "Elektronik",
-        "bebes": "Perlengkapan Bayi",
-        "cool_stuff": "Barang Unik",
-        "relogios_presentes": "Jam & Hadiah",
-        "climatizacao": "Pengatur Iklim",
-        "esporte_lazer": "Olahraga & Rekreasi",
-        "livros_interesse_geral": "Buku Umum",
-        "eletroportateis": "Peralatan Elektronik",
-        "alimentos": "Makanan",
-        "malas_acessorios": "Koper & Aksesori"
-    }
-    
-    if 'product_category_name' in df.columns:
-        df['product_category_name'] = df['product_category_name'].map(kategori_terjemahan).fillna(df['product_category_name'])
-        selected_category = st.sidebar.multiselect(
-            "🛍️ Pilih Kategori Produk:", df['product_category_name'].unique(), default=df['product_category_name'].unique()
-        )
-        df = df[df['product_category_name'].isin(selected_category)]
-    
     # Menampilkan data contoh
     st.write("**📄 Preview Data:**")
     st.write(df.head())
     
-    # Membuat grafik distribusi harga produk
-    fig_price_distribution = px.histogram(df, x='price', nbins=50, title='Distribusi Harga Produk')
-    
-    # Membuat tren jumlah pesanan per bulan
-    df_orders_by_month = df.groupby('order_month').size().reset_index(name='order_count')
-    fig_orders_trend = px.line(df_orders_by_month, x='order_month', y='order_count', title='Tren Jumlah Pesanan Per Bulan')
-    
     # Membuat dashboard dengan Streamlit
     st.title('📊 Dashboard Analisis Data')
     
-    # Menampilkan grafik
+    # Visualisasi Distribusi Harga Produk
     st.subheader("Distribusi Harga Produk")
-    st.plotly_chart(fig_price_distribution)
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.histplot(df['price'], bins=100, kde=True, ax=ax)
+    ax.set_xlabel("Harga")
+    ax.set_ylabel("Frekuensi")
+    ax.set_title("Distribusi Harga Produk")
+    st.pyplot(fig)
     
+    # Insight untuk Distribusi Harga Produk
+    st.markdown("** Insight:** Sebagian besar harga produk berada di bawah 500, dengan sedikit produk yang memiliki harga tinggi. Ini menunjukkan bahwa mayoritas produk yang dijual memiliki harga yang cukup terjangkau.")
+    
+    # Visualisasi Tren Jumlah Pesanan Per Bulan
     st.subheader("Tren Jumlah Pesanan Per Bulan")
-    st.plotly_chart(fig_orders_trend)
+    df_orders_by_month = df.groupby('order_month').size().reset_index(name='order_count')
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.lineplot(x='order_month', y='order_count', data=df_orders_by_month, marker='o', ax=ax)
+    ax.set_xlabel("Bulan")
+    ax.set_ylabel("Jumlah Pesanan")
+    ax.set_title("Tren Jumlah Pesanan Per Bulan")
+    plt.xticks(rotation=45)
+    st.pyplot(fig)
+    
+    # Insight untuk Tren Pesanan
+    st.markdown("** Insight:** Terlihat adanya pola kenaikan jumlah pesanan pada bulan-bulan tertentu, yang bisa mengindikasikan adanya faktor musiman dalam pembelian.")
+    
 else:
     st.error("Data tidak tersedia. Periksa kembali link Google Drive.")
 
