@@ -29,18 +29,20 @@ if df is not None:
     
     # Sidebar untuk filter interaktif
     st.sidebar.header("🔍 Filter Data")
-    
     # Filter berdasarkan rentang tanggal
     min_date = df['order_purchase_timestamp'].min()
     max_date = df['order_purchase_timestamp'].max()
     start_date, end_date = st.sidebar.date_input(
         "📅 Pilih Rentang Tanggal:", [min_date, max_date], min_value=min_date, max_value=max_date
     )
-    df = df[(df['order_purchase_timestamp'] >= pd.Timestamp(start_date)) & (df['order_purchase_timestamp'] <= pd.Timestamp(end_date))]
+
+    # Terapkan filter tanggal
+    df_filtered = df[(df['order_purchase_timestamp'] >= pd.Timestamp(start_date)) & 
+                     (df['order_purchase_timestamp'] <= pd.Timestamp(end_date))]
     
     # Menampilkan data contoh
-    st.write("**📄 Preview Data:**")
-    st.write(df.head())
+    st.write("📄 Preview Data:")
+    st.write(df_filtered.head())
     
     # Membuat dashboard dengan Streamlit
     st.title('📊 Dashboard Analisis Data')
@@ -48,18 +50,18 @@ if df is not None:
     # Visualisasi Distribusi Harga Produk
     st.subheader("Distribusi Harga Produk")
     fig, ax = plt.subplots(figsize=(10, 5))
-    sns.histplot(df['price'], bins=100, kde=True, ax=ax)
+    sns.histplot(df_filtered['price'], bins=50, kde=True, ax=ax)
     ax.set_xlabel("Harga")
     ax.set_ylabel("Frekuensi")
     ax.set_title("Distribusi Harga Produk")
     st.pyplot(fig)
     
     # Insight untuk Distribusi Harga Produk
-    st.markdown("** Insight:** Sebagian besar harga produk berada di bawah 500, dengan sedikit produk yang memiliki harga tinggi. Ini menunjukkan bahwa mayoritas produk yang dijual memiliki harga yang cukup terjangkau.")
+    st.markdown("*Insight:* Sebagian besar harga produk berada di bawah 500, dengan sedikit produk yang memiliki harga tinggi. Ini menunjukkan bahwa mayoritas produk yang dijual memiliki harga yang cukup terjangkau.")
     
     # Visualisasi Tren Jumlah Pesanan Per Bulan
     st.subheader("Tren Jumlah Pesanan Per Bulan")
-    df_orders_by_month = df.groupby('order_month').size().reset_index(name='order_count')
+    df_orders_by_month = df_filtered.groupby('order_month').size().reset_index(name='order_count')
     fig, ax = plt.subplots(figsize=(10, 5))
     sns.lineplot(x='order_month', y='order_count', data=df_orders_by_month, marker='o', ax=ax)
     ax.set_xlabel("Bulan")
@@ -69,7 +71,7 @@ if df is not None:
     st.pyplot(fig)
     
     # Insight untuk Tren Pesanan
-    st.markdown("** Insight:** Terlihat adanya pola kenaikan jumlah pesanan pada bulan-bulan tertentu, yang bisa mengindikasikan adanya faktor musiman dalam pembelian.")
+    st.markdown("*Insight:* Terlihat adanya pola kenaikan jumlah pesanan pada bulan-bulan tertentu, yang bisa mengindikasikan adanya faktor musiman dalam pembelian.")
     
 else:
     st.error("Data tidak tersedia. Periksa kembali link Google Drive.")
