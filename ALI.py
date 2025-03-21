@@ -8,7 +8,7 @@ from io import BytesIO
 # Fungsi untuk mengunduh dan membaca data dari Google Drive (dengan caching)
 @st.cache_data
 def load_data():
-    file_id = "1k-PdcMNikrVJ79-TNZc09dsPXZWNRse6"
+    file_id = "1k-PdcMNikrVJ79-TNZc09dsPXZWNRse6"  # Sesuaikan dengan ID file yang benar
     url = f"https://drive.google.com/uc?id={file_id}"
     
     response = requests.get(url)
@@ -26,8 +26,7 @@ if df is not None:
     # Konversi kolom tanggal ke format datetime
     df['order_purchase_timestamp'] = pd.to_datetime(df['order_purchase_timestamp'])
     df['order_month'] = df['order_purchase_timestamp'].dt.to_period('M').astype(str)
-    df['order_year'] = df['order_purchase_timestamp'].dt.year
-
+    
     # Sidebar untuk filter interaktif
     st.sidebar.header("🔍 Filter Data")
     # Filter berdasarkan rentang tanggal
@@ -46,13 +45,13 @@ if df is not None:
     st.write(df_filtered.head())
     
     # Membuat dashboard dengan Streamlit
-    st.title('📊 Dashboard Analisis Tren Pesanan')
+    st.title('📊 Dashboard Analisis Data')
     
     # Visualisasi Tren Jumlah Pesanan Per Bulan
-    st.subheader("Tren Jumlah Pesanan Per Bulan (2016-2018)")
+    st.subheader("Tren Jumlah Pesanan Per Bulan")
     df_orders_by_month = df_filtered.groupby('order_month').size().reset_index(name='order_count')
     fig, ax = plt.subplots(figsize=(10, 5))
-    sns.lineplot(x='order_month', y='order_count', data=df_orders_by_month, marker='o', ax=ax)
+    sns.lineplot(x='order_month', y='order_count', data=df_orders_by_month, marker='o', ax=ax, color='blue')
     ax.set_xlabel("Bulan")
     ax.set_ylabel("Jumlah Pesanan")
     ax.set_title("Tren Jumlah Pesanan Per Bulan")
@@ -60,20 +59,7 @@ if df is not None:
     st.pyplot(fig)
     
     # Insight untuk Tren Pesanan
-    st.markdown("Insight: Jumlah pesanan mengalami kenaikan signifikan pada bulan-bulan tertentu, terutama menjelang akhir tahun (November-Desember). Lonjakan ini kemungkinan besar disebabkan oleh musim liburan dan promosi besar seperti Harbolnas dan Black Friday.")
-    
-    # Visualisasi Lonjakan Pesanan
-    st.subheader("Pola Lonjakan Pesanan")
-    df_orders_by_year = df_filtered.groupby('order_year').size().reset_index(name='order_count')
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(x='order_year', y='order_count', data=df_orders_by_year, ax=ax)
-    ax.set_xlabel("Tahun")
-    ax.set_ylabel("Jumlah Pesanan")
-    ax.set_title("Jumlah Pesanan per Tahun")
-    st.pyplot(fig)
-    
-    # Insight untuk Lonjakan Pesanan
-    st.markdown("Insight: Terdapat peningkatan jumlah pesanan yang konsisten setiap tahunnya, dengan lonjakan terbesar terjadi pada akhir tahun. Perusahaan dapat memanfaatkan pola ini untuk mengoptimalkan strategi pemasaran dan manajemen stok guna meningkatkan keuntungan.")
+    st.markdown("Insight: Tren jumlah pesanan per bulan menunjukkan pola lonjakan signifikan pada bulan-bulan tertentu, terutama di akhir tahun (November–Desember). Lonjakan ini kemungkinan besar dipengaruhi oleh musim liburan serta promo besar seperti Harbolnas dan Black Friday. Setelah periode puncak, jumlah pesanan tetap tinggi tetapi mulai mengalami penurunan bertahap. Dari sisi bisnis, perusahaan dapat memanfaatkan tren ini dengan meningkatkan stok dan kapasitas layanan menjelang musim puncak, serta merancang strategi pemasaran yang sesuai dengan pola kenaikan pesanan.")
     
 else:
     st.error("Data tidak tersedia. Periksa kembali link Google Drive.")
