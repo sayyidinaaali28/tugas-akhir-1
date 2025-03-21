@@ -65,7 +65,7 @@ if df is not None:
     st.subheader("Tren Jumlah Pesanan dengan Skala Waktu Berbeda")
     df_orders_by_month['order_month'] = pd.to_datetime(df_orders_by_month['order_month'])
     fig, ax = plt.subplots(figsize=(10, 5))
-    sns.lineplot(x='order_month', y='order_count', data=df_orders_by_month, marker='o', ax=ax, color='red')
+    sns.lineplot(x='order_month', y='order_count', data=df_orders_by_month, marker='o', ax=ax)
     ax.set_xlabel("Bulan")
     ax.set_ylabel("Jumlah Pesanan")
     ax.set_title("Tren Jumlah Pesanan dalam Periode yang Lebih Detail")
