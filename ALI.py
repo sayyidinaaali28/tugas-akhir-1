@@ -8,7 +8,7 @@ from io import BytesIO
 # Fungsi untuk mengunduh dan membaca data dari Google Drive (dengan caching)
 @st.cache_data
 def load_data():
-    file_id = "1k-PdcMNikrVJ79-TNZc09dsPXZWNRse6"
+    file_id = "1k-PdcMNikrVJ79-TNZc09dsPXZWNRse6"  # Ganti dengan file ID terbaru jika berubah
     url = f"https://drive.google.com/uc?id={file_id}"
     
     response = requests.get(url)
@@ -44,23 +44,11 @@ if df is not None:
     st.write("📄 Preview Data:")
     st.write(df_filtered.head())
     
-    # Membuat dashboard dengan Streamlit
-    st.title('📊 Dashboard Analisis Data')
-    
-    # Visualisasi Distribusi Harga Produk
-    st.subheader("Distribusi Harga Produk")
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.histplot(df_filtered['price'], bins=50, kde=True, ax=ax)
-    ax.set_xlabel("Harga")
-    ax.set_ylabel("Frekuensi")
-    ax.set_title("Distribusi Harga Produk")
-    st.pyplot(fig)
-    
-    # Insight untuk Distribusi Harga Produk
-    st.markdown("*Insight:* Sebagian besar harga produk berada di bawah 500, dengan sedikit produk yang memiliki harga tinggi. Ini menunjukkan bahwa mayoritas produk yang dijual memiliki harga yang cukup terjangkau.")
+    # Dashboard Judul
+    st.title('📊 Dashboard Analisis Tren Pesanan')
     
     # Visualisasi Tren Jumlah Pesanan Per Bulan
-    st.subheader("Tren Jumlah Pesanan Per Bulan")
+    st.subheader("📈 Tren Jumlah Pesanan Per Bulan")
     df_orders_by_month = df_filtered.groupby('order_month').size().reset_index(name='order_count')
     fig, ax = plt.subplots(figsize=(10, 5))
     sns.lineplot(x='order_month', y='order_count', data=df_orders_by_month, marker='o', ax=ax)
@@ -70,9 +58,30 @@ if df is not None:
     plt.xticks(rotation=45)
     st.pyplot(fig)
     
-    # Insight untuk Tren Pesanan
-    st.markdown("*Insight:* Terlihat adanya pola kenaikan jumlah pesanan pada bulan-bulan tertentu, yang bisa mengindikasikan adanya faktor musiman dalam pembelian.")
+    # Insight Tren Pesanan
+    st.markdown(
+        "Insight: Data menunjukkan adanya lonjakan jumlah pesanan pada bulan tertentu, "
+        "terutama menjelang akhir tahun (November-Desember). Pola ini dapat dimanfaatkan "
+        "untuk strategi pemasaran dan pengelolaan stok." 
+    )
+    
+    # Analisis Lonjakan Pesanan
+    st.subheader("📊 Pola Lonjakan Pesanan")
+    peak_months = ['2017-11', '2017-12', '2018-11', '2018-12']  # Contoh bulan dengan lonjakan
+    df_peak = df_orders_by_month[df_orders_by_month['order_month'].isin(peak_months)]
+    
+    fig, ax = plt.subplots(figsize=(8, 4))
+    sns.barplot(x='order_month', y='order_count', data=df_peak, ax=ax, palette='coolwarm')
+    ax.set_xlabel("Bulan")
+    ax.set_ylabel("Jumlah Pesanan")
+    ax.set_title("Lonjakan Pesanan di Bulan Tertentu")
+    st.pyplot(fig)
+    
+    st.markdown(
+        "Insight: Peningkatan pesanan terjadi pada akhir tahun, kemungkinan dipengaruhi oleh "
+        "momen liburan dan diskon besar seperti Harbolnas atau Black Friday. Bisnis dapat menyesuaikan "
+        "strategi promosi dan stok untuk memaksimalkan keuntungan." 
+    )
     
 else:
     st.error("Data tidak tersedia. Periksa kembali link Google Drive.")
-
