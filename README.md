@@ -23,6 +23,10 @@ Untuk menjalankan proyek ini, pastikan telah menginstal Python serta pustaka yan
 ```sh
 pip install -r requirements.txt
 ```
+
+```sh
+buka cmd lalu ketik cd  (file directory dashboard)
+```
 Untuk menjalankan dashboard Streamlit, gunakan perintah:
 ```sh
 streamlit run ALI.py
